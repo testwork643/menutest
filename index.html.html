@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>المنيو</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --primary: #6B2D2D;
+      --accent: #1D9E75;
+      --bg: #f5f0ef;
+      --card-bg: #ffffff;
+      --text: #1a1a1a;
+      --text-muted: #7a6060;
+      --border: rgba(107,45,45,0.12);
+      --pink-light: #fce8e8;
+    }
+    body { font-family: 'Cairo', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+    header {
+      background: var(--primary); color: white;
+      padding: 1rem 2rem;
+      display: flex; align-items: center; justify-content: space-between;
+      position: sticky; top: 0; z-index: 100;
+    }
+    .logo { font-size: 1.4rem; font-weight: 700; }
+    .cart-icon-btn {
+      background: none; border: none; color: white;
+      font-size: 1.5rem; cursor: pointer; position: relative; display: none;
+    }
+    .cart-badge {
+      position: absolute; top: -6px; left: -6px;
+      background: var(--accent); color: white;
+      font-size: 11px; font-weight: 700;
+      width: 20px; height: 20px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    .layout {
+      display: grid; grid-template-columns: 1fr 360px;
+      gap: 1.5rem; max-width: 1200px; margin: 0 auto;
+      padding: 1.5rem; align-items: start;
+    }
+
+    .section-title { font-size: 2rem; font-weight: 700; color: var(--primary); margin-bottom: 1rem; font-style: italic; }
+
+    .cats-wrap { display: flex; gap: 10px; margin-bottom: 1.5rem; flex-wrap: wrap; }
+    .cat-btn {
+      padding: 8px 22px; border-radius: 999px;
+      border: 1.5px solid var(--border); background: white;
+      font-family: 'Cairo', sans-serif; font-size: 0.9rem; font-weight: 600;
+      cursor: pointer; color: var(--text-muted); transition: all 0.2s;
+    }
+    .cat-btn.active { background: var(--pink-light); border-color: var(--primary); color: var(--primary); }
+
+    .menu-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 16px; }
+
+    .card {
+      background: var(--card-bg); border-radius: 16px;
+      border: 1px solid var(--border); overflow: hidden;
+      transition: transform 0.2s, box-shadow 0.2s; position: relative;
+    }
+    .card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(107,45,45,0.1); }
+    .special-badge {
+      position: absolute; top: 10px; right: 10px;
+      background: var(--primary); color: white;
+      font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 999px;
+    }
+    .card-img {
+      width: 100%; height: 150px; background: var(--pink-light);
+      display: flex; align-items: center; justify-content: center; font-size: 3.5rem;
+    }
+    .card-img img { width: 100%; height: 150px; object-fit: cover; }
+    .card-body { padding: 12px 14px 14px; }
+    .card-name { font-size: 0.9rem; font-weight: 700; margin-bottom: 3px; font-style: italic; }
+    .card-price { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 10px; }
+
+    .variants { display: flex; gap: 6px; margin-bottom: 10px; flex-wrap: wrap; }
+    .var-btn {
+      padding: 4px 12px; border-radius: 999px;
+      border: 1.5px solid var(--border); background: white;
+      font-family: 'Cairo', sans-serif; font-size: 0.75rem; font-weight: 600;
+      cursor: pointer; color: var(--text-muted); transition: all 0.15s;
+    }
+    .var-btn.active-ice { background: #e8f4fd; border-color: #5bb8f5; color: #1a6fa8; }
+    .var-btn.active-hot { background: #fff0e0; border-color: #f5a623; color: #b56d00; }
+
+    .qty-wrap {
+      display: flex; align-items: center; border-radius: 10px;
+      overflow: hidden; border: 1.5px solid var(--border); margin-bottom: 8px;
+    }
+    .qty-btn {
+      width: 36px; height: 36px; border: none;
+      background: var(--pink-light); font-size: 1.1rem;
+      cursor: pointer; color: var(--primary); font-weight: 700; transition: background 0.15s;
+    }
+    .qty-btn:hover { background: #f5d0d0; }
+    .qty-num {
+      flex: 1; text-align: center; font-size: 0.9rem; font-weight: 700;
+      background: white; border: none; padding: 6px 0; color: var(--text);
+    }
+    .add-btn {
+      width: 100%; padding: 8px;
+      background: var(--pink-light); border: 1.5px solid var(--border);
+      border-radius: 10px; font-family: 'Cairo', sans-serif;
+      font-size: 0.85rem; font-weight: 700; color: var(--primary);
+      cursor: pointer; transition: background 0.15s;
+    }
+    .add-btn:hover { background: #f5d0d0; }
+
+    /* CART */
+    .cart-sidebar {
+      background: white; border-radius: 20px;
+      border: 1px solid var(--border); padding: 1.25rem;
+      position: sticky; top: 80px;
+    }
+    .cart-title { font-size: 1.3rem; font-weight: 700; margin-bottom: 1rem; font-style: italic; }
+    .cart-empty { text-align: center; padding: 2rem 1rem; color: var(--text-muted); font-size: 0.9rem; }
+    .cart-empty-icon { font-size: 2.5rem; margin-bottom: 0.5rem; }
+
+    .cart-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 0; border-bottom: 1px solid var(--border);
+    }
+    .cart-item-img {
+      width: 44px; height: 44px; border-radius: 10px;
+      background: var(--pink-light);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.4rem; flex-shrink: 0; overflow: hidden;
+    }
+    .cart-item-img img { width: 44px; height: 44px; object-fit: cover; }
+    .cart-item-info { flex: 1; min-width: 0; }
+    .cart-item-name { font-size: 0.85rem; font-weight: 700; }
+    .cart-item-sub { font-size: 0.75rem; color: var(--text-muted); }
+    .cart-item-price { font-size: 0.85rem; font-weight: 700; color: var(--primary); white-space: nowrap; }
+    .cart-item-qty { display: flex; align-items: center; gap: 6px; font-size: 0.85rem; }
+    .cq-btn {
+      width: 24px; height: 24px; border-radius: 50%;
+      border: 1.5px solid var(--border); background: var(--pink-light);
+      color: var(--primary); font-weight: 700; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; font-size: 0.9rem;
+    }
+    .cq-btn:hover { background: #f5d0d0; }
+    .del-btn { background: none; border: none; color: #ccc; cursor: pointer; font-size: 1rem; transition: color 0.15s; }
+    .del-btn:hover { color: #e24b4a; }
+
+    .cart-label { font-size: 0.8rem; font-weight: 700; color: var(--text-muted); margin: 1rem 0 6px; }
+    .notes-input {
+      width: 100%; border: 1.5px solid var(--border); border-radius: 10px;
+      padding: 8px 10px; font-family: 'Cairo', sans-serif; font-size: 0.85rem;
+      resize: none; color: var(--text); background: white; outline: none;
+    }
+    .notes-input:focus { border-color: var(--primary); }
+
+    .pay-methods { display: flex; gap: 8px; }
+    .pay-btn {
+      flex: 1; padding: 8px; border-radius: 10px;
+      border: 1.5px solid var(--border); background: white;
+      font-family: 'Cairo', sans-serif; font-size: 0.85rem; font-weight: 700;
+      cursor: pointer; color: var(--text-muted); transition: all 0.15s;
+    }
+    .pay-btn.active { background: var(--pink-light); border-color: var(--primary); color: var(--primary); }
+
+    .cart-total {
+      display: flex; justify-content: space-between; align-items: center;
+      margin: 1rem 0; font-size: 1.05rem; font-weight: 700;
+    }
+    .total-amount { color: var(--primary); font-size: 1.2rem; }
+
+    .wa-btn {
+      width: 100%; padding: 13px; border-radius: 12px; border: none;
+      background: var(--accent); color: white;
+      font-family: 'Cairo', sans-serif; font-size: 1rem; font-weight: 700;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      gap: 8px; transition: background 0.2s; margin-bottom: 8px;
+    }
+    .wa-btn:hover { background: #0F6E56; }
+    .clear-btn {
+      width: 100%; padding: 10px; border-radius: 12px;
+      border: 1.5px solid var(--border); background: white;
+      font-family: 'Cairo', sans-serif; font-size: 0.9rem; font-weight: 700;
+      cursor: pointer; color: var(--text-muted); transition: background 0.15s;
+    }
+    .clear-btn:hover { background: var(--bg); }
+
+    .state { text-align: center; padding: 4rem 1rem; color: var(--text-muted); }
+    .state-icon { font-size: 3rem; margin-bottom: 1rem; }
+
+    @media (max-width: 768px) {
+      .layout { grid-template-columns: 1fr; padding: 1rem; }
+      .cart-sidebar {
+        position: fixed; bottom: 0; left: 0; right: 0;
+        border-radius: 20px 20px 0 0; max-height: 85vh; overflow-y: auto;
+        transform: translateY(100%); transition: transform 0.3s ease;
+        z-index: 200; box-shadow: 0 -8px 32px rgba(0,0,0,0.15);
+      }
+      .cart-sidebar.open { transform: translateY(0); }
+      .cart-icon-btn { display: block; }
+      .mobile-overlay {
+        display: none; position: fixed; inset: 0;
+        background: rgba(0,0,0,0.4); z-index: 199;
+      }
+      .mobile-overlay.open { display: block; }
+      .mobile-bar {
+        display: none; position: fixed; bottom: 0; left: 0; right: 0;
+        background: var(--primary); color: white;
+        padding: 1rem 1.5rem; z-index: 150;
+        align-items: center; justify-content: space-between;
+      }
+      .mobile-bar.visible { display: flex; }
+      .mob-bar-btn {
+        background: var(--accent); color: white; border: none;
+        padding: 8px 18px; border-radius: 10px;
+        font-family: 'Cairo', sans-serif; font-weight: 700; font-size: 0.85rem; cursor: pointer;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">🍽️ المنيو</div>
+  <button class="cart-icon-btn" id="cartIconBtn" onclick="toggleCart()">
+    🛒
+    <span class="cart-badge" id="cartBadge" style="display:none">0</span>
+  </button>
+</header>
+
+<div class="mobile-overlay" id="mobileOverlay" onclick="toggleCart()"></div>
+
+<div class="layout">
+  <div>
+    <div class="section-title">Menu</div>
+    <div class="cats-wrap" id="catsWrap"></div>
+    <div id="menuGrid" class="menu-grid"></div>
+  </div>
+
+  <div class="cart-sidebar" id="cartSidebar">
+    <div class="cart-title">Your Order</div>
+    <div id="cartItems"></div>
+    <div id="cartBottom" style="display:none">
+      <div class="cart-label">Special Instructions</div>
+      <textarea class="notes-input" id="notesInput" rows="2" placeholder="e.g. no onions, extra spicy..."></textarea>
+      <div class="cart-label">Payment Method</div>
+      <div class="pay-methods">
+        <button class="pay-btn active" id="payCash" onclick="selectPay('cash')">💵 Cash</button>
+        <button class="pay-btn" id="payCard" onclick="selectPay('card')">💳 Card</button>
+      </div>
+      <div class="cart-total">
+        <span>Total:</span>
+        <span class="total-amount" id="totalAmount">0 AED</span>
+      </div>
+      <button class="wa-btn" onclick="sendWhatsApp()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
+          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+        </svg>
+        Order via WhatsApp
+      </button>
+      <button class="clear-btn" onclick="clearCart()">Clear Cart</button>
+    </div>
+    <div id="cartEmpty" class="cart-empty">
+      <div class="cart-empty-icon">🛒</div>
+      <div>السلة فاضية<br><small>ضيف أصناف من المنيو</small></div>
+    </div>
+  </div>
+</div>
+
+<div class="mobile-bar" id="mobileBar">
+  <div style="font-size:0.85rem;font-weight:600" id="mobileBarInfo"></div>
+  <button class="mob-bar-btn" onclick="toggleCart()">عرض الأوردر 🛒</button>
+</div>
+
+<script>
+  // ============================================================
+  //  ✏️  ضع الـ Sheet ID هنا
+  // ============================================================
+  const SHEET_ID = '1MK7Xzi8gsTIbbzcaV1kOauN9w1PBaZl3BI0WDuNe2ZE';
+
+  // ============================================================
+  //  رقم واتساب المطعم
+  // ============================================================
+  const WHATSAPP_NUMBER = '971547471046';
+
+  const RESTAURANT_NAME = 'المنيو';
+
+  const EMOJI_MAP = {
+    'coffee':'☕','matcha':'🍵','smoothies':'🥤','برجر':'🍔',
+    'بيتزا':'🍕','باستا':'🍝','مشروبات':'🧃','سلطة':'🥗','حلويات':'🍰'
+  };
+  function getEmoji(cat) {
+    if (!cat) return '🍽️';
+    const k = Object.keys(EMOJI_MAP).find(k => (cat+'').toLowerCase().includes(k.toLowerCase()));
+    return k ? EMOJI_MAP[k] : '🍽️';
+  }
+
+  const DEMO = [
+    { name:'Americano', price:23, description:'Classic espresso with water', category:'Coffee', image:'', variants:['Iced','Hot'] },
+    { name:'Latte',     price:26, description:'Espresso with steamed milk',  category:'Coffee', image:'', variants:['Iced','Hot'] },
+    { name:'Spanish Latte', price:26, description:'Latte with condensed milk', category:'Coffee', image:'', special:true, variants:['Iced','Hot'] },
+    { name:'Matcha Latte',  price:28, description:'Premium matcha with milk',  category:'Matcha', image:'' },
+    { name:'Mango Smoothie',price:30, description:'Fresh mango blend',         category:'Smoothies', image:'' },
+  ];
+
+  let allItems = [];
+  let activeCategory = 'All';
+  let cart = [];
+  let payMethod = 'cash';
+
+  function renderCategories() {
+    const cats = ['All', ...new Set(allItems.map(i => i.category))];
+    document.getElementById('catsWrap').innerHTML = cats.map(c =>
+      `<button class="cat-btn ${c===activeCategory?'active':''}" onclick="filterBy('${c}')">${c}</button>`
+    ).join('');
+  }
+
+  function renderMenu() {
+    const filtered = activeCategory==='All' ? allItems : allItems.filter(i=>i.category===activeCategory);
+    if (!filtered.length) {
+      document.getElementById('menuGrid').innerHTML = `<div class="state"><div class="state-icon">🔍</div><p>مفيش أصناف</p></div>`;
+      return;
+    }
+    document.getElementById('menuGrid').innerHTML = filtered.map(item => {
+      const idx = allItems.indexOf(item);
+      const hasV = item.variants && item.variants.length;
+      const imgHtml = item.image
+        ? `<img src="${item.image}" alt="${item.name}" onerror="this.parentElement.innerHTML='${getEmoji(item.category)}'">`
+        : getEmoji(item.category);
+      return `
+        <div class="card">
+          ${item.special ? '<div class="special-badge">⭐ Special</div>' : ''}
+          <div class="card-img">${imgHtml}</div>
+          <div class="card-body">
+            <div class="card-name">${item.name}</div>
+            <div class="card-price">${item.price} AED</div>
+            ${hasV ? `<div class="variants">${item.variants.map((v,vi)=>`
+              <button class="var-btn ${vi===0?(v.toLowerCase().includes('ic')?'active-ice':'active-hot'):''}"
+                      onclick="selectVariant(${idx},${vi},'${v}')" id="var-${idx}-${vi}">
+                ${v.toLowerCase().includes('ic')?'❄️':'🔥'} ${v}
+              </button>`).join('')}</div>` : ''}
+            <div class="qty-wrap" style="margin-bottom:8px">
+              <button class="qty-btn" onclick="changeQty(${idx},-1)">−</button>
+              <span class="qty-num" id="qty-${idx}">1</span>
+              <button class="qty-btn" onclick="changeQty(${idx},1)">+</button>
+            </div>
+            <button class="add-btn" onclick="addToCart(${idx})">+ Add to Order</button>
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  function selectVariant(idx, vi, val) {
+    allItems[idx]._selectedVariant = val;
+    allItems[idx].variants.forEach((_,i) => {
+      const btn = document.getElementById(`var-${idx}-${i}`);
+      if (!btn) return;
+      btn.className = 'var-btn';
+      if (i===vi) btn.classList.add(val.toLowerCase().includes('ic')?'active-ice':'active-hot');
+    });
+  }
+
+  function changeQty(idx, delta) {
+    const el = document.getElementById(`qty-${idx}`);
+    if (!el) return;
+    let q = parseInt(el.textContent) + delta;
+    if (q < 1) q = 1;
+    el.textContent = q;
+  }
+
+  function addToCart(idx) {
+    const item = allItems[idx];
+    const qty = parseInt(document.getElementById(`qty-${idx}`)?.textContent || 1);
+    const variant = item._selectedVariant || (item.variants?.[0] || null);
+    const key = item.name + (variant||'');
+    const existing = cart.find(c=>c.key===key);
+    if (existing) existing.qty += qty;
+    else cart.push({ key, name:item.name, price:item.price, qty, variant, image:item.image, category:item.category });
+    const el = document.getElementById(`qty-${idx}`);
+    if (el) el.textContent = '1';
+    renderCart();
+  }
+
+  function renderCart() {
+    const total = cart.reduce((s,c)=>s+c.price*c.qty,0);
+    const totalQty = cart.reduce((s,c)=>s+c.qty,0);
+    const badge = document.getElementById('cartBadge');
+    const mobileBar = document.getElementById('mobileBar');
+
+    if (!cart.length) {
+      document.getElementById('cartItems').innerHTML = '';
+      document.getElementById('cartEmpty').style.display = 'block';
+      document.getElementById('cartBottom').style.display = 'none';
+      badge.style.display = 'none';
+      mobileBar.classList.remove('visible');
+      return;
+    }
+
+    document.getElementById('cartEmpty').style.display = 'none';
+    document.getElementById('cartBottom').style.display = 'block';
+    badge.style.display = 'flex';
+    badge.textContent = totalQty;
+    mobileBar.classList.add('visible');
+    document.getElementById('mobileBarInfo').textContent = `${totalQty} صنف — ${total} AED`;
+    document.getElementById('totalAmount').textContent = `${total} AED`;
+
+    document.getElementById('cartItems').innerHTML = cart.map((c,i) => {
+      const imgHtml = c.image
+        ? `<img src="${c.image}" alt="${c.name}" onerror="this.parentElement.innerHTML='${getEmoji(c.category)}'">`
+        : getEmoji(c.category);
+      return `
+        <div class="cart-item">
+          <div class="cart-item-img">${imgHtml}</div>
+          <div class="cart-item-info">
+            <div class="cart-item-name">${c.name}</div>
+            <div class="cart-item-sub">${c.variant?`<span style="font-size:11px;background:#f0f0f0;padding:1px 6px;border-radius:4px">${c.variant}</span>`:''}</div>
+          </div>
+          <div class="cart-item-qty">
+            <button class="cq-btn" onclick="updateQty(${i},-1)">−</button>
+            <span>${c.qty}</span>
+            <button class="cq-btn" onclick="updateQty(${i},1)">+</button>
+          </div>
+          <div class="cart-item-price">${c.price*c.qty} AED</div>
+          <button class="del-btn" onclick="removeItem(${i})">🗑</button>
+        </div>`;
+    }).join('');
+  }
+
+  function updateQty(i, d) {
+    cart[i].qty += d;
+    if (cart[i].qty <= 0) cart.splice(i,1);
+    renderCart();
+  }
+  function removeItem(i) { cart.splice(i,1); renderCart(); }
+  function clearCart() { cart=[]; renderCart(); }
+
+  function selectPay(m) {
+    payMethod = m;
+    document.getElementById('payCash').classList.toggle('active', m==='cash');
+    document.getElementById('payCard').classList.toggle('active', m==='card');
+  }
+
+  function sendWhatsApp() {
+    if (!cart.length) return;
+    const notes = document.getElementById('notesInput').value.trim();
+    const total = cart.reduce((s,c)=>s+c.price*c.qty,0);
+    const payLabel = payMethod==='cash' ? '💵 Cash' : '💳 Card';
+
+    let msg = `🛒 *طلب جديد — ${RESTAURANT_NAME}*\n`;
+    msg += `━━━━━━━━━━━━━━━\n`;
+    cart.forEach(c => {
+      msg += `• ${c.name}${c.variant?` (${c.variant})`:''} × ${c.qty} — ${c.price*c.qty} AED\n`;
+    });
+    msg += `━━━━━━━━━━━━━━━\n`;
+    if (notes) msg += `📝 *ملاحظات:* ${notes}\n`;
+    msg += `💳 *الدفع:* ${payLabel}\n`;
+    msg += `💰 *الإجمالي:* ${total} AED`;
+
+    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`, '_blank');
+  }
+
+  function filterBy(cat) {
+    activeCategory = cat;
+    renderCategories();
+    renderMenu();
+  }
+
+  function toggleCart() {
+    document.getElementById('cartSidebar').classList.toggle('open');
+    document.getElementById('mobileOverlay').classList.toggle('open');
+  }
+
+  function loadFromSheet() {
+    fetch(`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`)
+      .then(r=>r.text())
+      .then(text => {
+        const json = JSON.parse(text.substring(47).slice(0,-2));
+        allItems = json.table.rows.map(row=>({
+          name:        row.c[0]?.v||'',
+          price:       row.c[1]?.v||0,
+          description: row.c[2]?.v||'',
+          category:    row.c[3]?.v||'عام',
+          image:       row.c[4]?.v||'',
+          variants:    row.c[5]?.v ? row.c[5].v.split(',').map(s=>s.trim()) : [],
+          special:     row.c[6]?.v===true||row.c[6]?.v==='true',
+        })).filter(i=>i.name);
+        renderCategories(); renderMenu(); renderCart();
+      })
+      .catch(()=>{ allItems=DEMO; renderCategories(); renderMenu(); renderCart(); });
+  }
+
+  if (SHEET_ID.trim()) loadFromSheet();
+  else { allItems=DEMO; renderCategories(); renderMenu(); renderCart(); }
+</script>
+</body>
+</html>
